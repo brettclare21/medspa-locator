@@ -54,7 +54,8 @@ export default function MedSpaLocator() {
     "botox",
     "lip filler",
     "facial spa",
-    "cosmetic dermatology"
+    "cosmetic dermatology",
+    "microneedling"
   ];
 
   const radiusOptions = [5, 10, 25, 50];
