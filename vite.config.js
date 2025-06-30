@@ -7,24 +7,22 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico'],
+      includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Med Spa Locator',
-        short_name: 'Spa Locator',
-        start_url: '.',
-        display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#2563eb',
+        name: 'MedSpa Locator',
+        short_name: 'Locator',
+        description: 'Find med spas and aesthetic providers near you',
+        theme_color: '#ffffff',
         icons: [
           {
-            src: 'pwa-192.png',
+            src: '/pwa-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
-            src: 'pwa-512.png',
+            src: '/pwa-512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
           }
         ]
       }
