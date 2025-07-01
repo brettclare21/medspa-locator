@@ -54,8 +54,7 @@ export default function MedSpaLocator() {
     "botox",
     "lip filler",
     "facial spa",
-    "cosmetic dermatology",
-    "microneedling"
+    "cosmetic dermatology"
   ];
 
   const radiusOptions = [5, 10, 25, 50];
@@ -106,7 +105,7 @@ export default function MedSpaLocator() {
   const fetchPlaceDetails = (placeId) => {
     return new Promise((resolve) => {
       const service = new window.google.maps.places.PlacesService(map);
-      service.getDetails({ placeId, fields: ["formatted_phone_number", "website", "url"] }, (place, status) => {
+      service.getDetails({ placeId, fields: ["formatted_phone_number", "website", "url", "types"] }, (place, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
           resolve(place);
         } else {
@@ -234,6 +233,11 @@ export default function MedSpaLocator() {
               <div className="font-bold text-lg text-gray-900 mb-1">{place.name}</div>
               <div className="text-sm text-gray-600 mb-1">{place.vicinity}</div>
               <div className="text-sm text-gray-600 mb-2">{place.distance.toFixed(1)} miles away</div>
+              {place.types && (
+                <div className="text-xs text-gray-500 italic mb-1">
+                  Categories: {place.types.map((t) => t.replace(/_/g, " ")).join(", ")}
+                </div>
+              )}
               <div className="flex flex-wrap items-center justify-start gap-4 text-sm mb-4">
                 {place.formatted_phone_number && (
                   <a href={`tel:${place.formatted_phone_number}`} className="text-blue-600 underline">
