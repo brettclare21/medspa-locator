@@ -105,7 +105,7 @@ export default function MedSpaLocator() {
   const fetchPlaceDetails = (placeId) => {
     return new Promise((resolve) => {
       const service = new window.google.maps.places.PlacesService(map);
-      service.getDetails({ placeId, fields: ["formatted_phone_number", "website", "url", "types"] }, (place, status) => {
+      service.getDetails({ placeId, fields: ["formatted_phone_number", "website", "url"] }, (place, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
           resolve(place);
         } else {
@@ -117,7 +117,7 @@ export default function MedSpaLocator() {
 
   const searchPlaces = async (lat, lng) => {
     const service = new window.google.maps.places.PlacesService(map);
-    const found = [];
+    const found = new Map();
 
     for (const keyword of keywords) {
       const request = {
@@ -129,9 +129,16 @@ export default function MedSpaLocator() {
         service.nearbySearch(request, async (results, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
             for (let place of results) {
+              const existing = found.get(place.place_id);
               const details = await fetchPlaceDetails(place.place_id);
               const distance = calculateDistance(lat, lng, place.geometry.location.lat(), place.geometry.location.lng());
-              found.push({ ...place, ...details, distance, matchedKeyword: keyword });
+              const newEntry = {
+                ...place,
+                ...details,
+                distance,
+                matchedKeywords: existing?.matchedKeywords ? [...existing.matchedKeywords, keyword] : [keyword]
+              };
+              found.set(place.place_id, newEntry);
             }
           }
           resolve();
@@ -139,7 +146,7 @@ export default function MedSpaLocator() {
       });
     }
 
-    const unique = Array.from(new Map(found.map(p => [p.place_id, p])).values());
+    const unique = Array.from(found.values());
     unique.sort((a, b) => a.distance - b.distance);
     setResults(unique);
     map.setCenter({ lat, lng });
@@ -233,9 +240,9 @@ export default function MedSpaLocator() {
               <div className="font-bold text-lg text-gray-900 mb-1">{place.name}</div>
               <div className="text-sm text-gray-600 mb-1">{place.vicinity}</div>
               <div className="text-sm text-gray-600 mb-2">{place.distance.toFixed(1)} miles away</div>
-              {place.matchedKeyword && (
+              {place.matchedKeywords && place.matchedKeywords.length > 0 && (
                 <div className="text-xs text-gray-500 italic mb-1">
-                  Matched keyword: {place.matchedKeyword}
+                  Matched keywords: {place.matchedKeywords.join(", ")}
                 </div>
               )}
               <div className="flex flex-wrap items-center justify-start gap-4 text-sm mb-4">
