@@ -131,7 +131,7 @@ export default function MedSpaLocator() {
             for (let place of results) {
               const details = await fetchPlaceDetails(place.place_id);
               const distance = calculateDistance(lat, lng, place.geometry.location.lat(), place.geometry.location.lng());
-              found.push({ ...place, ...details, distance });
+              found.push({ ...place, ...details, distance, matchedKeyword: keyword });
             }
           }
           resolve();
@@ -233,9 +233,9 @@ export default function MedSpaLocator() {
               <div className="font-bold text-lg text-gray-900 mb-1">{place.name}</div>
               <div className="text-sm text-gray-600 mb-1">{place.vicinity}</div>
               <div className="text-sm text-gray-600 mb-2">{place.distance.toFixed(1)} miles away</div>
-              {place.types && (
+              {place.matchedKeyword && (
                 <div className="text-xs text-gray-500 italic mb-1">
-                  Categories: {place.types.map((t) => t.replace(/_/g, " ")).join(", ")}
+                  Matched keyword: {place.matchedKeyword}
                 </div>
               )}
               <div className="flex flex-wrap items-center justify-start gap-4 text-sm mb-4">
